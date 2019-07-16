@@ -369,7 +369,7 @@
 
         // 绘制起始点
         function drawStartPoint(inputX, inputY) {
-            if (inputX !== NaN && inputY !== NaN) {
+            if (inputX > 0 && inputY > 0) {
                 ctx.beginPath();
                 ctx.fillStyle = redPoint;
                 ctx.arc(inputX, inputY, 5, 0, 2 * Math.PI);
@@ -379,7 +379,7 @@
 
         // 绘制结束点
         function drawEndPoint(inputX, inputY) {
-            if (inputX !== NaN && inputY !== NaN) {
+            if (inputX > 0 && inputY > 0) {
                 ctx.beginPath();
                 ctx.fillStyle = bluePoint;
                 ctx.arc(inputX, inputY, 5, 0, 2 * Math.PI);
@@ -389,7 +389,7 @@
 
         // 绘制控制点
         function drawControllPoint(inputX, inputY) {
-            if (inputX !== NaN && inputY !== NaN) {
+            if (inputX > 0 && inputY > 0) {
                 ctx.beginPath();
                 ctx.fillStyle = greenPoint;
                 ctx.arc(inputX, inputY, 5, 0, 2 * Math.PI);
