@@ -6,19 +6,18 @@
     <link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
     <style>
         canvas{
-            position: absolute;
             float: left;
             border: 1px solid #000;
         }
         .form-class{
-            position: relative;
-            float: left;
+            position: absolute;
             margin-left: 1000px;
         }
     </style>
 </head>
 <body>
     <canvas id="canvas" width="1000" height="800"></canvas>
+    <button class="layui-btn" onclick="reduction();">还原</button>
     <div id="formDiv" class="layui-form form-class">
         <div class="layui-form-item">
             <label class="layui-form-label">贝塞尔曲线</label>
@@ -27,6 +26,7 @@
                     <option value="0"></option>
                     <option value="2">二次贝塞尔曲线</option>
                     <option value="3">三次贝塞尔曲线</option>
+                    <option value="4">圆弧</option>
                 </select>
             </div>
         </div>
@@ -55,9 +55,9 @@
 
         // form
         function createForm(target) {
-            if (target == 0) reduction();
             if (target == 2) create2Beziercurve();
             if (target == 3) create3Beziercurve();
+            if (target == 4) createArcTo();
         }
 
         // 还原
@@ -87,16 +87,6 @@
         // 2
         function create2Beziercurve() {
             let content = '<div class="layui-form-item">' +
-                '<label class="layui-form-label">贝塞尔曲线</label>' +
-                '<div class="layui-input-block">' +
-                '<select id="beziercurveSelect" lay-filter="bezierS">' +
-                '<option value="0">请选择</option>' +
-                '<option value="2" selected>二次贝塞尔曲线</option>' +
-                '<option value="3">三次贝塞尔曲线</option>' +
-                '</select>' +
-                '</div>' +
-                '</div>' +
-                '<div class="layui-form-item">' +
                 '<label class="layui-form-label">开始点横坐标</label>' +
                 '<div class="layui-input-block">' +
                 '<input id="B_StartX" type="number" oninput="changeValue(\'B_StartX\', this);" min="0" max="1000" class="layui-input">' +
@@ -147,16 +137,6 @@
         // 3
         function create3Beziercurve() {
             let content = '<div class="layui-form-item">' +
-                '<label class="layui-form-label">贝塞尔曲线</label>' +
-                '<div class="layui-input-block">' +
-                '<select id="beziercurveSelect" lay-filter="bezierS">' +
-                '<option value="0"></option>' +
-                '<option value="2" selected>二次贝塞尔曲线</option>' +
-                '<option value="3">三次贝塞尔曲线</option>' +
-                '</select>' +
-                '</div>' +
-                '</div>' +
-                '<div class="layui-form-item">' +
                 '<label class="layui-form-label">开始点横坐标</label>' +
                 '<div class="layui-input-block">' +
                 '<input id="B_StartX" type="number" oninput="changeValue(\'B_StartX\', this);" min="0" max="1000" class="layui-input">' +
@@ -202,6 +182,62 @@
                 '<label class="layui-form-label">控制点2纵坐标</label>' +
                 '<div class="layui-input-block">' +
                 '<input id="3B2_ControllY" type="number" oninput="changeValue(\'3B2_ControllY\', this);" min="0" max="800" class="layui-input">' +
+                '</div>' +
+                '</div>';
+            $('#formDiv').empty();
+            $('#formDiv').append(content);
+            // layui.form
+            layui.use('form', function () {
+                let form = layui.form;
+                // select
+                form.on('select(bezierS)', function (data) {
+                    createForm(data.value);
+                });
+            });
+        }
+        
+        // arcTo
+        function createArcTo() {
+            let content = '<div class="layui-form-item">' +
+                '<label class="layui-form-label">起始点横坐标</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A_StartX" type="number" oninput="changeValue(\'A_StartX\', this);" min="0" max="1000" class="layui-input">' +
+                '</div>' +
+                '</div>' +
+                '<div class="layui-form-item">' +
+                '<label class="layui-form-label">起始点纵坐标</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A_StartY" type="number" oninput="changeValue(\'A_StartY\', this);" min="0" max="800" class="layui-input">' +
+                '</div>' +
+                '</div>' +
+                '<div class="layui-form-item">' +
+                '<label class="layui-form-label">控制点1横坐标</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A1_ControllX" type="number" oninput="changeValue(\'A1_ControllX\', this);" min="0" max="1000" class="layui-input">' +
+                '</div>' +
+                '</div>' +
+                '<div class="layui-form-item">' +
+                '<label class="layui-form-label">控制点1纵坐标</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A1_ControllY" type="number" oninput="changeValue(\'A1_ControllY\', this);" min="0" max="800" class="layui-input">' +
+                '</div>' +
+                '</div>' +
+                '<div class="layui-form-item">' +
+                '<label class="layui-form-label">控制点2横坐标</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A2_ControllX" type="number" oninput="changeValue(\'A2_ControllX\', this);" min="0" max="1000" class="layui-input">' +
+                '</div>' +
+                '</div>' +
+                '<div class="layui-form-item">' +
+                '<label class="layui-form-label">控制点2纵坐标</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A2_ControllY" type="number" oninput="changeValue(\'A2_ControllY\', this);" min="0" max="800" class="layui-input">' +
+                '</div>' +
+                '</div>' +
+                '<div class="layui-form-item">' +
+                '<label class="layui-form-label">半径</label>' +
+                '<div class="layui-input-block">' +
+                '<input id="A_R" type="number" oninput="changeValue(\'A_R\', this);" min="0" max="500" class="layui-input">' +
                 '</div>' +
                 '</div>';
             $('#formDiv').empty();
@@ -321,6 +357,69 @@
                     drawBezierCurve3(parseInt($('#B_StartX').val()), parseInt($('#B_StartY').val()), parseInt($('#B_EndX').val()), parseInt($('#B_EndY').val()), parseInt($('#3B1_ControllX').val()), parseInt($('#3B1_ControllY').val()), parseInt($('#3B2_ControllX').val()), parseInt(val));
                     break;
                 }
+                case 'A_StartX' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt(val), parseInt($('#A_StartY').val()));
+                    drawControllPoint(parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()));
+                    drawControllPoint(parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt($('#A_R').val()));
+                    break;
+                }
+                case 'A_StartY' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt($('#A_StartX').val()), parseInt(val));
+                    drawControllPoint(parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()));
+                    drawControllPoint(parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt($('#A_R').val()));
+                    break;
+                }
+                case 'A1_ControllX' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()));
+                    drawControllPoint(parseInt(val), parseInt($('#A1_ControllY').val()));
+                    drawControllPoint(parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt($('#A_R').val()));
+                    break;
+                }
+                case 'A1_ControllY' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()));
+                    drawControllPoint(parseInt($('#A1_ControllX').val()), parseInt(val));
+                    drawControllPoint(parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt($('#A_R').val()));
+                    break;
+                }
+                case 'A2_ControllX' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()));
+                    drawControllPoint(parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()));
+                    drawControllPoint(parseInt(val), parseInt($('#A2_ControllY').val()));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt($('#A_R').val()));
+                    break;
+                }
+                case 'A2_ControllY' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()));
+                    drawControllPoint(parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()));
+                    drawControllPoint(parseInt($('#A2_ControllX').val()), parseInt(val));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt($('#A_R').val()));
+                    break;
+                }
+                case 'A_R' : {
+                    clearCanvas();
+                    drawGrid();
+                    drawStartPoint(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()));
+                    drawControllPoint(parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()));
+                    drawControllPoint(parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()));
+                    drawArcTo(parseInt($('#A_StartX').val()), parseInt($('#A_StartY').val()), parseInt($('#A1_ControllX').val()), parseInt($('#A1_ControllY').val()), parseInt($('#A2_ControllX').val()), parseInt($('#A2_ControllY').val()), parseInt(val));
+                    break;
+                }
             }
         }
         
@@ -414,6 +513,17 @@
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.bezierCurveTo(controll1X, controll1Y, controll2X, controll2Y, endX, endY);
+                ctx.strokeStyle = '';
+                ctx.stroke();
+            }
+        }
+
+        // 绘制圆弧
+        function drawArcTo(startX, startY, controll1X, controll1Y, controll2X, controll2Y, r) {
+            if (startX > 0 && startY > 0 && controll1X > 0 && controll1Y > 0 && controll2X > 0 && controll2Y > 0) {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.arcTo(controll1X, controll1Y, controll2X, controll2Y, r);
                 ctx.strokeStyle = '';
                 ctx.stroke();
             }
